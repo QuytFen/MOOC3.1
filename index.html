@@ -12,6 +12,19 @@
     h1 {
       text-align: center;
     }
+    #large-view {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    #largeImage {
+      max-width: 80%;
+      border: 3px solid #333;
+      border-radius: 8px;
+    }
+    #largeCaption {
+      font-size: 16px;
+      margin-top: 8px;
+    }
     .gallery {
       display: flex;
       flex-wrap: wrap;
@@ -45,6 +58,12 @@
 <body onload="pageLoaded()">
   <h1>My Accessible Photo Gallery</h1>
 
+  <!-- Large image view -->
+  <div id="large-view">
+    <img id="largeImage" src="download.png" alt="Beautiful sunset over the ocean">
+    <div id="largeCaption">Delay</div>
+  </div>
+
   <div class="gallery">
     <figure>
       <img src="download.png" alt="Beautiful sunset over the ocean">
@@ -73,31 +92,52 @@
   </div>
 
   <script>
-    // Khi trang load, thêm tabindex cho mỗi figure
     function pageLoaded() {
       console.log("Page loaded – Adding tabindex to images.");
       let figures = document.querySelectorAll("figure");
+      let largeImage = document.getElementById("largeImage");
+      let largeCaption = document.getElementById("largeCaption");
+      let originalSrc = largeImage.src;
+      let originalAlt = largeImage.alt;
+      let originalCaption = largeCaption.textContent;
+
       for (let i = 0; i < figures.length; i++) {
         figures[i].setAttribute("tabindex", "0");
+        console.log(`Tabindex set for figure ${i}`);
 
-        // Gắn sự kiện focus và blur
+        let img = figures[i].querySelector("img");
+        let caption = figures[i].querySelector("figcaption");
+
+        // Focus event
         figures[i].addEventListener("focus", function() {
           console.log("Focus on figure " + i);
-          figures[i].style.borderColor = "green";
-        });
-        figures[i].addEventListener("blur", function() {
-          console.log("Blur from figure " + i);
-          figures[i].style.borderColor = "#ccc";
+          largeImage.src = img.src;
+          largeImage.alt = img.alt;
+          largeCaption.textContent = caption.textContent;
         });
 
-        // Gắn sự kiện mouseover và mouseleave
+        // Blur event
+        figures[i].addEventListener("blur", function() {
+          console.log("Blur from figure " + i);
+          largeImage.src = "";
+          largeImage.alt = "";
+          largeCaption.textContent = "";
+        });
+
+        // Mouseover event
         figures[i].addEventListener("mouseover", function() {
           console.log("Mouse over figure " + i);
-          figures[i].style.borderColor = "red";
+          largeImage.src = img.src;
+          largeImage.alt = img.alt;
+          largeCaption.textContent = caption.textContent;
         });
+
+        // Mouseleave event
         figures[i].addEventListener("mouseleave", function() {
           console.log("Mouse leave figure " + i);
-          figures[i].style.borderColor = "#ccc";
+          largeImage.src = originalSrc;
+          largeImage.alt = originalAlt;
+          largeCaption.textContent = originalCaption;
         });
       }
     }
